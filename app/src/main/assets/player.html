@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ISO Player</title>
+<style>
+html,body{margin:0;height:100%;background:#0f1115;color:#e8eaed;font-family:sans-serif}
+#menu{max-width:480px;margin:0 auto;padding:24px 16px}
+.card{background:#1a1d24;border-radius:14px;padding:16px;margin-bottom:14px}
+select,button,.file{width:100%;padding:14px;border-radius:10px;border:1px solid #2c303a;background:#12151b;color:#e8eaed;font-size:1rem;box-sizing:border-box}
+.file{display:block;text-align:center;border-style:dashed}
+.file.has{border-color:#4f8cff;color:#4f8cff}
+input[type=file]{display:none}
+#go{background:#4f8cff;border:0;font-weight:600}
+#go:disabled{opacity:.4}
+#game{position:fixed;inset:0;display:none;background:#000}
+#game.on{display:block}
+small{color:#9aa0a6}
+</style></head><body>
+<div id="menu">
+<h1>ISO Player</h1>
+<div class="card"><select id="sys">
+<option value="psx">PlayStation (PS1)</option>
+<option value="segaCD">Sega CD</option>
+<option value="segaSaturn">Sega Saturn</option>
+<option value="3do">3DO</option>
+</select></div>
+<div class="card">
+<label class="file" id="drop" for="rom">Tap to choose game file</label>
+<input id="rom" type="file">
+<small>Games over about 1 GB may not load.</small></div>
+<button id="go" disabled>Start game</button>
+</div>
+<div id="game"></div>
+<script>
+var rom=document.getElementById('rom'),drop=document.getElementById('drop'),go=document.getElementById('go'),file=null;
+rom.addEventListener('change',function(){
+ file=rom.files[0]||null;
+ if(file){drop.textContent=file.name;drop.classList.add('has');go.disabled=false;}
+});
+go.addEventListener('click',function(){
+ if(!file)return;
+ document.getElementById('menu').style.display='none';
+ document.getElementById('game').classList.add('on');
+ window.EJS_player='#game';
+ window.EJS_core=document.getElementById('sys').value;
+ window.EJS_gameUrl=URL.createObjectURL(file);
+ window.EJS_gameName=file.name.replace(/\.[^.]+$/,'');
+ window.EJS_pathtodata='https://cdn.emulatorjs.org/stable/data/';
+ window.EJS_startOnLoaded=true;
+ var s=document.createElement('script');
+ s.src=window.EJS_pathtodata+'loader.js';
+ document.body.appendChild(s);
+});
+</script></body></html>
